@@ -7,8 +7,8 @@
 #include "render.hpp"
 #include "gmobject.hpp"
 
-const int MAP_W = 40;
-const int MAP_H = 40;
+const int MAP_W = 30;
+const int MAP_H = 30;
 
 class gmTile : public gmObject
 {

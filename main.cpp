@@ -10,6 +10,7 @@
 
 SDL_Event event;
 bool running = true;
+bool showMinimap = true;
 
 void get_map()
 {
@@ -85,6 +86,7 @@ void run()
 			{
 				if(event.key.keysym.sym == SDLK_q){get_map();load_tiles();}
 				if(event.key.keysym.sym == SDLK_p){running = false;}
+				if(event.key.keysym.sym == SDLK_m){showMinimap ? showMinimap=false:showMinimap=true;}
 			}
 			if(event.type == SDL_MOUSEBUTTONDOWN)
 			{
@@ -102,7 +104,7 @@ void run()
 		mouseY = event.motion.y;
 		set_camera();
 		load_tiles();
-		draw_minimap();
+		if(showMinimap){draw_minimap();}
 		SDL_Flip(screen);
 	}
 	return;
