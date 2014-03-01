@@ -23,8 +23,6 @@ void load_tiles()
 {
 	//Handy variables for the isometric tiles.
 	SDL_Surface* cursor = load_image("tile/cursor.png");
-	int heightOverlapping = (21)/2+1;
-	int yOffset = 40-21;
 	
 	//Render the map background.
 	apply(0,0, currentMap.background, screen);
@@ -40,9 +38,10 @@ void load_tiles()
 			int yOffset = 40-21;
 			apply(x*40+(y%2!=0)*20-cameraX, y*heightOverlapping-yOffset-cameraY, currentMap.tile[y][x].image, screen);
 			//Place the cursor. It's very jumpy, and I'm not sure why.
-			if(&currentMap.tile[y][x] == oT){apply(x*40+(y%2!=0)*20-cameraX, y*heightOverlapping-yOffset-cameraY, cursor, screen);}
+			if(&currentMap.tile[y][x] == oT){apply(x*40+(y%2!=0)*20-cameraX, y*(21/2+1)-19-cameraY, cursor, screen);}
 		}
 	}
+	SDL_FreeSurface(cursor);
 	return;
 }
 
@@ -84,7 +83,7 @@ void run()
 		{
 			if(event.type == SDL_KEYDOWN)
 			{
-				if(event.key.keysym.sym == SDLK_q){get_map();load_tiles();}
+				if(event.key.keysym.sym == SDLK_q){get_map(); load_tiles();}
 				if(event.key.keysym.sym == SDLK_p){running = false;}
 				if(event.key.keysym.sym == SDLK_m){showMinimap ? showMinimap=false:showMinimap=true;}
 			}
