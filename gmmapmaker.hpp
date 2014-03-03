@@ -29,23 +29,24 @@ class gmMap
 	//A nice image to display behind the tiles.
 	SDL_Surface* background;
 	gmTile tile[MAP_H][MAP_W];
+	std::vector <gmGridObject> objects;
 	//Function to create the map.
 	int make()
 	{
-		SDL_Surface* sand, *gravel, *ocean, *rock, *grass;
+		int numObjects = 12;
+		SDL_Surface *sand, *gravel, *ocean, *grass;
 		sand = load_image("tile/sand.png");
 		gravel = load_image("tile/gravel.png" );
 		ocean = load_image("tile/ocean.png" );
-		rock = load_image("tile/rock.png" );
 		grass = load_image("tile/grass.png");
-		SDL_Surface* terrain[] = {grass, gravel, ocean, sand, rock};
-		int iterations = 25;		//Good values are 40, 
+		SDL_Surface* terrain[] = {grass, ocean, gravel, sand};
+		int iterations = 1;		//Good values are 25, 40
 		int tileData[MAP_H][MAP_W];
 		for(int x = 0; x < MAP_W; x++)
 		{
 			for(int y = 0; y < MAP_H; y++)
 			{
-				tileData[y][x] = rand()%5;
+				tileData[y][x] = rand()%4;
 			}
 		}
 		for(int x = 0; x < MAP_W; x++)
@@ -55,7 +56,6 @@ class gmMap
 				if(tileData[x][y] == 0){tile[y][x].image = sand;}
 				else if(tileData[x][y] == 1){tile[y][x].image = gravel;}
 				else if(tileData[x][y] == 2){tile[y][x].image = ocean;}
-				else if(tileData[x][y] == 3){tile[y][x].image = rock;}
 				else 				 		{tile[y][x].image = grass;}
 			}
 		}
@@ -76,6 +76,11 @@ class gmMap
 					if(adjacentTiles >= 4){tile[y][x].image = terrain[j];break;}
 				}
 			}}
+		}
+		if(!objects.empty()){objects = std::vector <gmGridObject>();}
+		for(int i = 0; i<numObjects; i++)
+		{
+			objects.push_back(gmGridObject(load_image("object/object.png"), rand()%(MAP_W-1), rand()%(MAP_H-1), "daah"));
 		}
 		return 0;
 	}

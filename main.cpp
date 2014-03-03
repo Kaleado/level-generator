@@ -11,6 +11,7 @@
 SDL_Event event;
 bool running = true;
 bool showMinimap = true;
+SDL_Surface* mouseCursor = NULL;
 
 void get_map()
 {
@@ -21,7 +22,6 @@ void get_map()
 
 void load_tiles()
 {
-	//Handy variables for the isometric tiles.
 	SDL_Surface* cursor = load_image("tile/cursor.png");
 	
 	//Render the map background.
@@ -30,13 +30,12 @@ void load_tiles()
 	//Get the tile the mouse is currently over.
 	gmTile* oT = get_hovering_tile();
 	//Render all the tiles.
-	for(int x = 0; x < MAP_W; x++)
+	for(int x = 0; x < MAP_W-1; x++)
 	{
-		for(int y = 0; y < MAP_H; y++)
+		for(int y = 0; y < MAP_H-1; y++)
 		{
-			int heightOverlapping = (21)/2+1;
-			int yOffset = 40-21;
-			apply(x*40+(y%2!=0)*20-cameraX, y*heightOverlapping-yOffset-cameraY, currentMap.tile[y][x].image, screen);
+			//Place the tile.
+			apply(x*40+(y%2!=0)*20-cameraX, y*(21/2+1)-19-cameraY, currentMap.tile[y][x].image, screen);
 			//Place the cursor. It's very jumpy, and I'm not sure why.
 			if(&currentMap.tile[y][x] == oT){apply(x*40+(y%2!=0)*20-cameraX, y*(21/2+1)-19-cameraY, cursor, screen);}
 		}
@@ -45,11 +44,35 @@ void load_tiles()
 	return;
 }
 
+void render_objects()
+{
+	for(uint i=1; i<currentMap.objects.size(); i++)
+	{
+		currentMap.objects[i-1].render();
+		if(currentMap.objects[i-1].mouse_is_over())
+		{
+			currentMap.objects[i-1].show_tooltip();
+		}
+	}
+	return;
+}
+
+void show_cursor()
+{
+	if(showMouse)
+	{
+		if(mouseCursor == NULL){mouseCursor = load_image("mouse.png");}
+		apply(mouseX, mouseY, mouseCursor, screen);
+	}
+	return;
+}
+
 void set_camera()
 {
 	int scrollSpeed = 2;
 	int mouseX, mouseY;
 	SDL_GetMouseState(&mouseX, &mouseY);
+	
 	//If the mouse is at any of the borders of the screen, move the camera.
 	if(mouseX == 0)			{cameraX -= scrollSpeed;}
 	if(mouseX == SCREEN_W-1){cameraX += scrollSpeed;}
@@ -69,6 +92,7 @@ void init()
 	TTF_Init();
 	screen = SDL_SetVideoMode(SCREEN_W, SCREEN_H, 32, SDL_SWSURFACE);
 	SDL_WM_GrabInput(SDL_GRAB_ON);
+	SDL_ShowCursor(0);
 	SDL_Delay(2000);
 	return;
 }
@@ -81,6 +105,7 @@ void run()
 	{
 		while(SDL_PollEvent(&event))
 		{
+			if(event.type == SDL_QUIT){running = false;}
 			if(event.type == SDL_KEYDOWN)
 			{
 				if(event.key.keysym.sym == SDLK_q){get_map(); load_tiles();}
@@ -102,8 +127,16 @@ void run()
 		mouseX = event.motion.x;
 		mouseY = event.motion.y;
 		set_camera();
+		//Show the tiles.
 		load_tiles();
+		//Show the objects over the tiles.
+		render_objects();
+		//Show the minimap.
 		if(showMinimap){draw_minimap();}
+		//Show the mouse cursor.
+		show_cursor();
+		//Reset the cursor.
+		showMouse = true;
 		SDL_Flip(screen);
 	}
 	return;
@@ -111,10 +144,12 @@ void run()
 
 void halt()
 {
+	SDL_Quit();
+	TTF_Quit();
 	return;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 	init();
 	run();

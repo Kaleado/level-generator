@@ -1,6 +1,7 @@
 #ifndef RENDER_H
 #define RENDER_H
 
+#include <vector>
 #include <iostream>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
@@ -13,6 +14,7 @@ int mouseX, mouseY;
 SDL_Surface* screen;
 const int SCREEN_W = 640;
 const int SCREEN_H = 480;
+bool showMouse = true;
 
 //Gets the colour of the pixel at location (x, y) in the given surface, surf.
 Uint32 get_pixel32(SDL_Surface* surf, int x, int y)
