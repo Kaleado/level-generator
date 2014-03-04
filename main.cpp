@@ -5,7 +5,6 @@
 #include "render.hpp"
 #include "gmmapmaker.hpp"
 #include "gmobject.hpp"
-#include "gmminimap.hpp"
 #include "gmgridcursor.hpp"
 
 SDL_Event event;
@@ -132,7 +131,7 @@ void run()
 		//Show the objects over the tiles.
 		render_objects();
 		//Show the minimap.
-		if(showMinimap){draw_minimap();}
+		if(showMinimap){currentMap.draw_minimap();}
 		//Show the mouse cursor.
 		show_cursor();
 		//Reset the cursor.

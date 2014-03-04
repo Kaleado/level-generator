@@ -1,1 +1,7 @@
-A level generator based on undefined behaviour.
+A level generator and viewer.
+
+PRESS 'P' TO QUIT.
+Press 'Q' to regenerate the level. Doing this too often will cause huge memory use, and I don't know why.
+Press 'M' to toggle the minimap. It scales!
+Right-click to centre the viewport on the right-clicked spot.
+Move the mouse to the edges of the screen to pan the view.

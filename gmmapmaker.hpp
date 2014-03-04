@@ -26,10 +26,37 @@ class gmMap
 {
 	private:
 	public:
+	//The minimap generated when the map is made.
+	SDL_Surface* minimap;
 	//A nice image to display behind the tiles.
 	SDL_Surface* background;
 	gmTile tile[MAP_H][MAP_W];
 	std::vector <gmGridObject> objects;
+	int draw_minimap()
+	{
+		float scaleFactor = (1.0/((40.0 * (MAP_W+1)) / 160.0));
+		apply(0,0,minimap,screen);
+		rectangleRGBA(screen, cameraX*scaleFactor,cameraY*scaleFactor, 
+						(160 > SCREEN_W*scaleFactor 	? SCREEN_W*scaleFactor	: 160)+cameraX*scaleFactor,
+						(120 > SCREEN_H*scaleFactor 	? SCREEN_H*scaleFactor	: 120)+cameraY*scaleFactor,
+						0xFF, 0xFF, 0xFF, 0xFF);
+		return 0;
+	}
+	//Function to produce a minimap surface given the current map.
+	SDL_Surface* get_minimap()
+	{
+		float scaleFactor = (1.0/((40.0 * (MAP_W+1)) / 160.0));
+		int heightOverlapping = (20*scaleFactor)/2+1;
+		int yOffset = (40*scaleFactor)-(20*scaleFactor);
+		SDL_Surface* newMinimap = SDL_CreateRGBSurface(0, 160, 120, 32, 0, 0, 0, 0);
+		SDL_Surface* miniTile = NULL;
+		for(int x=0; x<MAP_W; x++){for(int y=0; y<MAP_H; y++){
+			miniTile = rotozoomSurface(tile[y][x].image, 0, scaleFactor, 0);
+			apply(x*(40*scaleFactor)+(y%2!=0)*(20*scaleFactor), y*heightOverlapping-yOffset, miniTile, newMinimap);
+		}}
+		SDL_FreeSurface(miniTile);
+		return newMinimap;
+	}
 	//Function to create the map.
 	int make()
 	{
@@ -82,6 +109,7 @@ class gmMap
 		{
 			objects.push_back(gmGridObject(load_image("object/object.png"), rand()%(MAP_W-1), rand()%(MAP_H-1), "daah"));
 		}
+		minimap = get_minimap();
 		return 0;
 	}
 }currentMap;

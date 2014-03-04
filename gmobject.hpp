@@ -38,7 +38,7 @@ class gmObject
 			SDL_Colour white = {0xff, 0xff, 0xff};
 			SDL_FillRect(screen, &bg, 0x00000000);
 			SDL_Surface *nameLabel = TTF_RenderText_Blended(fnt, name.c_str(), white);
-			apply(bg.x, bg.y, nameLabel, screen);
+			apply(bg.x, bg.y-4, nameLabel, screen);
 			SDL_FreeSurface(nameLabel);
 			TTF_CloseFont(fnt);
 		}
